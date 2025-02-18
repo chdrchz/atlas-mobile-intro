@@ -1,7 +1,9 @@
-import { router } from "expo-router";
+import { useActivitiesContext } from "@/components/ActivitiesProvider";
+import { Link, router } from "expo-router";
 import { Pressable, Text, View } from "react-native";
 
 export default function Index() {
+  const { activities } = useActivitiesContext();
   return (
     <View
       style={{
@@ -10,12 +12,15 @@ export default function Index() {
         alignItems: "center",
       }}
     >
-      <Text>Edit app/index.tsx to edit this screen.</Text>
-      <Pressable onPress={() => {
-        router.push("/add-activity-screen")
-      }}>
-        <Text>Click Me!</Text>
-      </Pressable>
+      {activities.map((activity) => (
+        <Text key={activity.id}>
+          {activity.steps} steps on{" "}
+          {new Date(activity.date).toLocaleDateString()}
+        </Text>
+      ))}
+      <Link href={"/add-activity-screen"} replace>
+        <Text>Add Activity</Text>
+      </Link>
     </View>
   );
 }
