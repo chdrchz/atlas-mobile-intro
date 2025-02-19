@@ -18,7 +18,7 @@ export function useActivities() {
             setActivities(result || []);
         } catch (error) {
             console.error("Error fetching activities:", error);
-            setActivities([]); // Ensure activities is always an array
+            setActivities([]);
         }
     }
 
@@ -27,13 +27,18 @@ export function useActivities() {
         reload();
     }
 
+    function deleteAllActivities() {
+        db.execSync('DELETE FROM activities');
+        reload();
+    }
+
     async function reload() {
-        await getActivities(); // This will properly update state
+        await getActivities(); 
     }
 
     useEffect(() => {
         reload();
     }, []);
 
-    return { getActivities, activities, insertActivity };
+    return { getActivities, activities, insertActivity, deleteAllActivities };
 }

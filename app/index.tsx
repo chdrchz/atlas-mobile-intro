@@ -5,7 +5,7 @@ import { Text, View, StyleSheet, Pressable } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 
 export default function Index() {
-  const { activities } = useActivitiesContext();
+  const { activities, deleteAllActivities } = useActivitiesContext();
   return (
     <View style={{ flex: 1, margin: "auto", width: "100%", paddingTop: 20, backgroundColor: "#FEF9E6"}}>
       <FlashList
@@ -18,7 +18,7 @@ export default function Index() {
       <Link style={styles.buttonOne} href={"/add-activity-screen"} replace>
         <Text style={styles.buttonText}>Add Activity</Text>
       </Link>
-      <Pressable style={styles.buttonTwo}>
+      <Pressable style={styles.buttonTwo} onPress={deleteAllActivities}>
         <Text style={styles.buttonText}>Delete All Activities</Text>
       </Pressable>
     </View>
