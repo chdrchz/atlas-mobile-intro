@@ -1,9 +1,10 @@
 import { Text, View, StyleSheet, Alert } from "react-native";
 import Swipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 import { useActivitiesContext } from "./ActivitiesProvider";
+import { useRef, useEffect } from 'react';
 
 type ActivityProps = {
-  id: number; // Added id to props type
+  id: number;
   steps?: number;
   date?: string | number | Date;
 };
@@ -22,6 +23,13 @@ export default function Activity({
   date = new Date(),
 }: ActivityProps) {
   const { deleteActivity } = useActivitiesContext();
+  const swipeableRef = useRef<Swipeable>(null);
+  
+  useEffect(() => {
+    if (swipeableRef.current) {
+      swipeableRef.current.close();
+    }
+  }, [id]);
   
   const handleDelete = () => {
     Alert.alert(
@@ -30,7 +38,12 @@ export default function Activity({
       [
         {
           text: "Cancel",
-          style: "cancel"
+          style: "cancel",
+          onPress: () => {
+            if (swipeableRef.current) {
+              swipeableRef.current.close();
+            }
+          }
         },
         {
           text: "Delete",
@@ -51,6 +64,7 @@ export default function Activity({
   return (
     <View style={styles.wrapper}>
       <Swipeable
+        ref={swipeableRef}
         renderLeftActions={() => <Action text="Delete" />}
         renderRightActions={() => <Action text="Delete" />}
         onSwipeableOpen={handleDelete}
