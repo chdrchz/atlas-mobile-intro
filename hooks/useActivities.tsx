@@ -2,43 +2,57 @@ import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useState } from "react";
 
 type Activity = {
-    id: number;
-    steps: number;
-    date: number;
+  id: number;
+  steps: number;
+  date: number;
 };
 
 export function useActivities() {
-    const [activities, setActivities] = useState<Activity[]>([]);
-    const db = useSQLiteContext();
+  const [activities, setActivities] = useState<Activity[]>([]);
+  const db = useSQLiteContext();
 
-    async function getActivities() {
-        try {
-            const result = await db.getAllAsync<Activity>("SELECT * FROM activities");
-            console.log("Fetched activities:", result);
-            setActivities(result || []);
-        } catch (error) {
-            console.error("Error fetching activities:", error);
-            setActivities([]);
-        }
+  async function getActivities() {
+    try {
+      const result = await db.getAllAsync<Activity>("SELECT * FROM activities");
+      console.log("Fetched activities:", result);
+      setActivities(result || []);
+    } catch (error) {
+      console.error("Error fetching activities:", error);
+      setActivities([]);
     }
+  }
 
-    function insertActivity(steps: number, date: Date) {
-        db.execSync(`INSERT INTO activities (steps, date) VALUES (${steps}, ${date.getTime()})`);
-        reload();
-    }
+  function insertActivity(steps: number, date: Date) {
+    db.execSync(
+      `INSERT INTO activities (steps, date) VALUES (${steps}, ${date.getTime()})`
+    );
+    reload();
+  }
 
-    function deleteAllActivities() {
-        db.execSync('DELETE FROM activities');
-        reload();
-    }
+  const deleteActivity = (id: number) => {
+    db.execSync(`DELETE FROM activities WHERE id = ${id}`);
+    console.log(`This should be deleted now: ${id}`);
+    reload();
+  };
 
-    async function reload() {
-        await getActivities(); 
-    }
+  function deleteAllActivities() {
+    db.execSync("DELETE FROM activities");
+    reload();
+  }
 
-    useEffect(() => {
-        reload();
-    }, []);
+  async function reload() {
+    await getActivities();
+  }
 
-    return { getActivities, activities, insertActivity, deleteAllActivities };
+  useEffect(() => {
+    reload();
+  }, []);
+
+  return {
+    getActivities,
+    activities,
+    insertActivity,
+    deleteAllActivities,
+    deleteActivity,
+  };
 }

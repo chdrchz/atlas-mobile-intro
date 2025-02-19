@@ -1,42 +1,88 @@
-import { Text, View, StyleSheet } from "react-native";
+import { useActivities } from "@/hooks/useActivities";
+import { Text, View, StyleSheet, Alert } from "react-native";
+import Swipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 
 type ActivityProps = {
+  id: number; // Added id to props type
   steps?: number;
   date?: string | number | Date;
 };
 
+export const Action = ({ text }: { text: string }) => {
+  return (
+    <View style={styles.actionView}>
+      <Text style={styles.actionText}>{text}</Text>
+    </View>
+  );
+};
+
 export default function Activity({
+  id,
   steps = 0,
   date = new Date(),
 }: ActivityProps) {
-  const formattedDate = date ? new Date(date).toLocaleDateString() : "Unknown date";
-  const formattedTime = date ? new Date(date).toLocaleTimeString() : "Unknown time";
+  const { deleteActivity } = useActivities();
+  
+  const handleDelete = () => {
+    Alert.alert(
+      "Delete Activity",
+      "Are you sure you want to delete this activity?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => deleteActivity(id)
+        }
+      ]
+    );
+  };
+
+  const formattedDate = date
+    ? new Date(date).toLocaleDateString()
+    : "Unknown date";
+  const formattedTime = date
+    ? new Date(date).toLocaleTimeString()
+    : "Unknown time";
 
   return (
-    <View style={styles.container}>
-      <View style={styles.dateTimeContainer}>
-        <Text style={styles.dateText}>{formattedDate}</Text>
-        <Text style={styles.timestampText}>{formattedTime}</Text>
-      </View>
-      <Text style={styles.stepsText}>{`Steps: ${steps.toLocaleString()}`}</Text>
+    <View style={styles.wrapper}>
+      <Swipeable
+        renderLeftActions={() => <Action text="Delete" />}
+        renderRightActions={() => <Action text="Delete" />}
+        onSwipeableOpen={handleDelete}
+      >
+        <View style={styles.container}>
+          <View style={styles.dateTimeContainer}>
+            <Text style={styles.dateText}>{formattedDate}</Text>
+            <Text style={styles.timestampText}>{formattedTime}</Text>
+          </View>
+          <Text
+            style={styles.stepsText}
+          >{`Steps: ${steps.toLocaleString()}`}</Text>
+        </View>
+      </Swipeable>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  wrapper: {
+    marginTop: 24,
+    marginHorizontal: 10,
+  },
   container: {
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "flex-start",
     backgroundColor: "white",
-    width: "auto",
-    height: "auto",
+    width: "100%",
     padding: 10,
-    marginTop: 24,
     borderWidth: 2,
-    marginLeft: 10,
-    marginRight: 10,
   },
   dateTimeContainer: {
     display: "flex",
@@ -58,4 +104,15 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop: 10,
   },
+  actionView: {
+    backgroundColor: '#ff0000',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100%',
+    width: 75,
+  },
+  actionText: {
+    color: 'white',
+    fontWeight: 'bold',
+  }
 });

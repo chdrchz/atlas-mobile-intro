@@ -10,7 +10,7 @@ export default function Index() {
     <View style={{ flex: 1, margin: "auto", width: "100%", paddingTop: 20, backgroundColor: "#FEF9E6"}}>
       <FlashList
         renderItem={({ item }) => (
-          <Activity steps={item.steps} date={item.date} />
+          <Activity steps={item.steps} date={item.date} id={item.id} />
         )}
         data={activities}
         estimatedItemSize={50}
