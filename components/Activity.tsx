@@ -1,6 +1,6 @@
-import { useActivities } from "@/hooks/useActivities";
 import { Text, View, StyleSheet, Alert } from "react-native";
 import Swipeable from "react-native-gesture-handler/ReanimatedSwipeable";
+import { useActivitiesContext } from "./ActivitiesProvider";
 
 type ActivityProps = {
   id: number; // Added id to props type
@@ -21,7 +21,7 @@ export default function Activity({
   steps = 0,
   date = new Date(),
 }: ActivityProps) {
-  const { deleteActivity } = useActivities();
+  const { deleteActivity } = useActivitiesContext();
   
   const handleDelete = () => {
     Alert.alert(
